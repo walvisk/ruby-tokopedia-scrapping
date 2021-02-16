@@ -28,10 +28,10 @@ class ExcelGenerator
       worksheet.write_value(row = write_index, col = 3, product[1], format = nil)
       worksheet.write_value(row = write_index, col = 4, product[2], format = nil)
       worksheet.write_value(row = write_index, col = 5, product[3], format = nil)
-      worksheet.write_value(row = write_index, col = 6, product[5], format = nil)
+      worksheet.write_value(row = write_index, col = 6, product[4], format = nil)
 
       puts "Menulis Data #{write_index}"
-      save_image(product[4], write_index, folder)
+      save_image(product[5], write_index, folder)
 
       write_index += 1
     end

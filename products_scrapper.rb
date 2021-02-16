@@ -1,5 +1,6 @@
 require 'watir'
 require 'nokogiri'
+require 'open-uri'
 
 require './config_repository'
 
@@ -12,55 +13,44 @@ class ProductsScrapper
     keyword       = @config.keyword
     desired_count = @config.desired_count
 
-    browser = Watir::Browser.new
-
-    products = []
-
-    page = 1
-
+    output = Set.new
     puts 'Scrapping begin'
 
-    do_break = false
+    page = 1
     loop do
-      break if do_break == true
+      break if output.size == desired_count
+
       url = "https://www.tokopedia.com/search?page=#{page}&q=#{keyword}&st=product"
       puts "scrapping url: #{url}"
 
-      browser.goto(url)
+      html = open(url)
+      doc = Nokogiri::HTML(html)
 
-      doc = Nokogiri::HTML(browser.html)
       wrapper_products = doc.css('div.css-7fmtuv')
 
       wrapper_products.each_with_index do |wrp, index|
-        if products.size == desired_count
-          do_break = true
-          break
-        end
+        break if output.size == desired_count
 
-        item = []
+        wrapper_link = wrp.css('a.pcv3__info-content.css-gwkf0u')
+        next if wrapper_link.empty?
 
-        location_wrapper = wrp.css('div.css-16hun4e')
-        next if location_wrapper.empty?
-
-        product_location = location_wrapper.children.first.text
-        item << product_location
-
-        product_link = wrp.children.first.attr('href')
-        fixed_link = product_link
-        if product_link.slice(0, 24) == 'https://ta.tokopedia.com'
-          parsed_link = URI.parse(product_link)
+        link_text    = wrapper_link.attribute('href').text
+        link_product = link_text
+        if link_text.slice(0, 24) == 'https://ta.tokopedia.com'
+          parsed_link  = URI.parse(link_text)
           query_params = URI.decode_www_form(parsed_link.query).to_h
-          fixed_link = query_params['r']
+          link_product = query_params['r']
         end
-        item << fixed_link
+        link = link_product[/[^\?]+/]
 
-        products << item
+
+        output << link
       end
+      puts "Jumlah Product Yang Telah Diambil = #{output.size} dari #{desired_count}"
 
       page += 1
-      puts "Jumlah Product Yang Telah Diambil = #{products.size} dari #{desired_count}"
-
     end
-    products
+
+    output
   end
 end

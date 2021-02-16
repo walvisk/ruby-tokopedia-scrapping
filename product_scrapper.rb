@@ -4,16 +4,14 @@ require 'byebug'
 
 
 class ProductScrapper
-  def initialize(products)
-    @products = products
+  def initialize(product_links)
+    @product_links = product_links
   end
 
   def call(config)
     result = []
-    @products.each_with_index do |dt, index|
+    @product_links.each_with_index do |link, index|
       item = []
-      link = dt.last
-
       html = open(link)
       doc = Nokogiri::HTML(html)
       doc.encoding = 'utf-8'
@@ -27,25 +25,32 @@ class ProductScrapper
       desc.search('br').each {|n| n.replace("\n")}
       product_desc = desc.text
 
-      product_location = dt.first
-      location = "Tokopedia | #{product_location}"
-
       img_link = doc.css('img.success.fade').attr('src').value
       product_img_link = img_link.sub('500-square', '900')
 
+      link_toko = link.split("/")[0..-2].join("/")
+      product_location = get_product_location(link_toko)
+      location = "Tokopedia | #{product_location}"
 
       item << product_title
       item << product_price
       item << product_desc
       item << location
-      item << product_img_link
       item << link
+      item << product_img_link
 
       result << item
       puts "Proses Data #{index + 1} dari #{config.desired_count}"
     end
 
     result
+  end
+
+  def get_product_location(link_toko)
+    html = open(link_toko)
+    doc = Nokogiri::HTML(html)
+    doc.encoding = 'utf-8'
+    doc.css("p.css-dxunmy-unf-heading.e1qvo2ff8").children.last.text
   end
 end
 
