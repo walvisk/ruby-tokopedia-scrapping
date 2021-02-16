@@ -23,14 +23,20 @@ class ExcelGenerator
     worksheet.write_value(row = 0, col = 6, 'link', format = nil)
 
     @products.each_with_index do |product, index|
+      puts "Menulis Data ke-#{write_index}"
+
       worksheet.write_value(row = write_index, col = 1, index+1, format = nil)
       worksheet.write_value(row = write_index, col = 2, product[0], format = nil)
       worksheet.write_value(row = write_index, col = 3, product[1], format = nil)
-      worksheet.write_value(row = write_index, col = 4, product[2], format = nil)
+
+      description = product[2]
+      description = product[0] if description.nil? || description.empty?
+      worksheet.write_value(row = write_index, col = 4, description, format = nil)
+
       worksheet.write_value(row = write_index, col = 5, product[3], format = nil)
       worksheet.write_value(row = write_index, col = 6, product[4], format = nil)
 
-      puts "Menulis Data #{write_index}"
+      puts "Menyimpan gambar ke-#{write_index}"
       save_image(product[5], write_index, folder)
 
       write_index += 1
@@ -43,6 +49,5 @@ class ExcelGenerator
     open(img_link) do |u|
       File.open(File.join(Dir.pwd, "/#{folder}/images/#{index}.jpg"), 'wb') { |f| f.write(u.read) }
     end
-    puts "gambar ke-#{index} telah disimpan"
   end
 end
