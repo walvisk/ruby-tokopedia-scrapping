@@ -22,24 +22,26 @@ class ExcelGenerator
     worksheet.write_value(row = 0, col = 5, 'lokasi', format = nil)
     worksheet.write_value(row = 0, col = 6, 'link', format = nil)
 
+    excel_index = 1
     @products.each_with_index do |product, index|
       puts "Menulis Data ke-#{write_index}"
 
-      worksheet.write_value(row = write_index, col = 1, index+1, format = nil)
-      worksheet.write_value(row = write_index, col = 2, product[0], format = nil)
-      worksheet.write_value(row = write_index, col = 3, product[1], format = nil)
+      worksheet.write_value(row = excel_index, col = 1, write_index, format = nil)
+      worksheet.write_value(row = excel_index, col = 2, product[0], format = nil)
+      worksheet.write_value(row = excel_index, col = 3, product[1], format = nil)
 
       description = product[2]
       description = product[0] if description.nil? || description.empty?
-      worksheet.write_value(row = write_index, col = 4, description, format = nil)
+      worksheet.write_value(row = excel_index, col = 4, description, format = nil)
 
-      worksheet.write_value(row = write_index, col = 5, product[3], format = nil)
-      worksheet.write_value(row = write_index, col = 6, product[4], format = nil)
+      worksheet.write_value(row = excel_index, col = 5, product[3], format = nil)
+      worksheet.write_value(row = excel_index, col = 6, product[4], format = nil)
 
       puts "Menyimpan gambar ke-#{write_index}"
       save_image(product[5], write_index, folder)
 
       write_index += 1
+      excel_index += 1
     end
 
     workbook.close
