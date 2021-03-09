@@ -1,6 +1,8 @@
 require 'watir'
 require 'nokogiri'
 require 'open-uri'
+require 'cgi'
+require 'uri'
 
 require './config_repository'
 
@@ -20,7 +22,9 @@ class ProductsScrapper
     loop do
       break if output.size == desired_count
 
-      url = "https://www.tokopedia.com/search?page=#{page}&q=#{keyword}&st=product"
+      string_url = "https://www.tokopedia.com/search?page=#{page}&q=#{keyword}&st=product"
+      # url = CGI.escape(string_url)
+      url = URI::encode(string_url)
       puts "scrapping url: #{url}"
 
       html = open(url)
@@ -31,7 +35,8 @@ class ProductsScrapper
       wrapper_products.each_with_index do |wrp, index|
         break if output.size == desired_count
 
-        wrapper_link = wrp.css('a.pcv3__info-content.css-gwkf0u')
+        # wrapper_link = wrp.css('a.pcv3__info-content css-1qnnuob')
+        wrapper_link = wrp.css('a')
         next if wrapper_link.empty?
 
         link_text    = wrapper_link.attribute('href').text
@@ -42,7 +47,6 @@ class ProductsScrapper
           link_product = query_params['r']
         end
         link = link_product[/[^\?]+/]
-
 
         output << link
       end
