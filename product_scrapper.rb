@@ -12,7 +12,16 @@ class ProductScrapper
     result = []
     @product_links.each_with_index do |link, index|
       item = []
-      html = open(link)
+      html = nil
+
+      begin
+        puts "link product = #{link}"
+        html = open(link)
+      rescue => exception
+        puts "error"
+        next
+      end
+
       doc = Nokogiri::HTML(html)
       doc.encoding = 'utf-8'
 
@@ -25,8 +34,13 @@ class ProductScrapper
       desc.search('br').each {|n| n.replace("\n")}
       product_desc = desc.text
 
-      img_link = doc.css('img.success.fade').attr('src').value
-      product_img_link = img_link.sub('500-square', '900')
+      img_wrapper = doc.css('img.success.fade').attr('src')
+      img_link = 'link'
+      product_img_link = 'link'
+      unless img_wrapper&.nil?
+        img_link = doc.css('img.success.fade').attr('src').value
+        product_img_link = img_link.sub('500-square', '900')
+      end
 
       link_toko = link.split("/")[0..-2].join("/")
       product_location = get_product_location(link_toko)
@@ -50,7 +64,7 @@ class ProductScrapper
     html = open(link_toko)
     doc = Nokogiri::HTML(html)
     doc.encoding = 'utf-8'
-    doc.css("p.css-dxunmy-unf-heading.e1qvo2ff8").children.last.text
+    doc.css("p.css-dxunmy-unf-heading.e1qvo2ff8").children&.last&.text
   end
 end
 
