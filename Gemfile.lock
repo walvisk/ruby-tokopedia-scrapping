@@ -1,0 +1,27 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    fast_excel (0.5.0)
+      ffi (> 1.9, < 2)
+    ffi (1.16.3)
+    regexp_parser (2.9.0)
+    rexml (3.2.6)
+    rubyzip (2.3.2)
+    selenium-webdriver (4.16.0)
+      rexml (~> 3.2, >= 3.2.5)
+      rubyzip (>= 1.2.2, < 3.0)
+      websocket (~> 1.0)
+    watir (7.3.0)
+      regexp_parser (>= 1.2, < 3)
+      selenium-webdriver (~> 4.2)
+    websocket (1.2.10)
+
+PLATFORMS
+  x86_64-darwin-20
+
+DEPENDENCIES
+  fast_excel (~> 0.5.0)
+  watir (~> 7.3)
+
+BUNDLED WITH
+   2.4.22

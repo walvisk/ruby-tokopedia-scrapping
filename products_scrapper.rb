@@ -24,10 +24,10 @@ class ProductsScrapper
 
       string_url = "https://www.tokopedia.com/search?page=#{page}&q=#{keyword}&st=product"
       # url = CGI.escape(string_url)
-      url = URI::encode(string_url)
+      url = URI.parse(string_url)
       puts "scrapping url: #{url}"
 
-      html = open(url)
+      html = URI.open(url)
       doc = Nokogiri::HTML(html)
 
       wrapper_products = doc.css('div.css-7fmtuv')
